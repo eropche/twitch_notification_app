@@ -38,7 +38,7 @@ class StartPullBroadcasters extends Command
     {
         // Example :)
         $names = [
-            'lasqa', 'honeymad', 'segall', 'usachman', 'melharucos', 'arrowwoods', 'c_a_k_e'
+            'lasqa', 'honeymad', 'segall', 'usachman', 'melharucos', 'arrowwoods', 'c_a_k_e', 'odinezy'
         ];
         foreach ($names as $name) {
             InterestBroadcaster::create(['name' => $name]);

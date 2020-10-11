@@ -9,7 +9,7 @@ use App\Category;
 use App\InterestBroadcaster;
 use App\StreamHistory;
 use App\SubsCount;
-use App\Telegram\BotSender;
+use App\Telegram\TwitchBotSender;
 use App\TwitchApi\Authorization;
 use App\TwitchApi\Broadcaster as BroadcasterApi;
 use App\TwitchApi\Category as CategoryApi;
@@ -33,7 +33,7 @@ class TwitchService
         CategoryApi $categoryApi,
         Stream $streamApi,
         Clip $clipApi,
-        BotSender $botSender
+        TwitchBotSender $botSender
     ) {
         $this->authorizationApi = $authorizationApi;
         $this->broadcasterApi   = $broadcasterApi;
@@ -76,7 +76,7 @@ class TwitchService
                 ->first();
             if (!$stream || $stream['type'] !== 'live') {
 
-                // сообщение об окончании
+                $this->botSender->endStreamNotification($broadcaster->name);
 
                 $streamHistory->data_end = new DateTimeImmutable();
                 $broadcaster->is_live = false;
@@ -91,7 +91,12 @@ class TwitchService
                 $categoryArray[]           = $category->id;
                 $streamHistory->categories = json_encode($categoryArray);
 
-                // сообщение о смене категории
+                $this->botSender->changeGameNotification(
+                    $stream['user_name'],
+                    $stream['title'],
+                    $category->name,
+                    $stream['thumbnail_url']
+                );
             }
 
             $streamHistory->average_num_viewers = ($streamHistory->average_num_viewers + $stream['viewer_count'])/2;
@@ -99,12 +104,16 @@ class TwitchService
 
             $clip = $this->clipApi->getClipByBroadcasterAndDate(
                 $broadcaster->twitch_id,
-                new DateTimeImmutable('-3min'),
-                new DateTimeImmutable('+3min')
+                new DateTimeImmutable('-5min'),
+                new DateTimeImmutable()
             );
 
             if ($clip) {
-                // отправляем клип
+                $this->botSender->clipNotification(
+                    $broadcaster->name,
+                    $clip['url'],
+                    $clip['title']
+                );
             }
         }
     }
@@ -115,8 +124,8 @@ class TwitchService
             $stream = $this->streamApi->getStream($broadcaster->twitch_id);
             if (!$stream || $stream['type'] !== 'live') continue;
             if (StreamHistory::where('twitch_id', $stream['id'])->first()) continue;
-
             $category = $this->categorySave($stream['game_id']);
+
             StreamHistory::create([
                 'date_start'          => new DateTimeImmutable($stream['started_at']),
                 'twitch_id'           => $stream['id'],
@@ -128,7 +137,12 @@ class TwitchService
             $broadcaster->is_live = true;
             $broadcaster->save();
 
-            // Отправляем в телегу инфу (стример, игра, титл, картинка, кол-во людей)
+            $this->botSender->startStreamNotification(
+                $stream['user_name'],
+                $stream['title'],
+                $category->name,
+                $stream['thumbnail_url']
+            );
         }
     }
 

@@ -6,7 +6,7 @@ use App\Services\TwitchService;
 use Illuminate\Console\Command;
 
 /**
- * Команда на чек стримов. Раз в 3 мин?
+ * Команда на чек стримов. Раз в 2 мин?
  */
 class HistoryActualize extends Command
 {
