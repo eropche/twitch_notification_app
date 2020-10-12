@@ -8,14 +8,13 @@ class TwitchBotSender extends BotSender
 {
     public function startStreamNotification(string $streamer, string $title, string $game, string $image)
     {
-        $image = str_replace(['{width}', '{height}'], ['1920', '1200'], $image);
         $message = "
 __".$streamer."__ подрубил
 ".$title."
 
 Играет ".$game;
 
-        $this->sendMessageWithImgToChannel($image, $message);
+        $this->sendMessageWithImgToChannel($this->imageFormatting($image), $message);
     }
 
     public function endStreamNotification(string $streamer)
@@ -37,13 +36,20 @@ $title;
 
     public function changeGameNotification(string $streamer, string $title, string $game, string $image)
     {
-        $image = str_replace(['{width}', '{height}'], ['1920', '1200'], $image);
         $message = "
 __".$streamer."__ сменил игру
 ".$title."
 
 Сейчас ".$game;
 
-        $this->sendMessageWithImgToChannel($image, $message);
+        $this->sendMessageWithImgToChannel($this->imageFormatting($image), $message);
+    }
+
+    protected function imageFormatting(string $img): string
+    {
+        $img = str_replace(['{width}', '{height}'], ['1920', '1200'], $img); // подставляем размер
+        $img = $img.'?a='.time();                                            // добавляем параметр против кеширования
+
+        return $img;
     }
 }
