@@ -78,7 +78,7 @@ class TwitchService
 
                 $this->botSender->endStreamNotification($broadcaster->name);
 
-                $streamHistory->data_end = new DateTimeImmutable();
+                $streamHistory->date_end = new DateTimeImmutable();
                 $broadcaster->is_live = false;
                 $broadcaster->save();
                 $streamHistory->save();
