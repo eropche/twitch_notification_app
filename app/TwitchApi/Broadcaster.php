@@ -20,7 +20,7 @@ class Broadcaster
         return $response->json()['data'][0];
     }
 
-    public function getChannelDescription(string $broadcasterId): array
+    public function getChannelDescription(string $broadcasterId): string
     {
         $response = Http::withToken(Configuration::authorizationToken())
             ->withHeaders(['Client-Id' => Configuration::clientId()])
