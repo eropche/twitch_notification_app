@@ -104,7 +104,7 @@ class TwitchService
 
             $clip = $this->clipApi->getClipByBroadcasterAndDate(
                 $broadcaster->twitch_id,
-                new DateTimeImmutable('-5min'),
+                new DateTimeImmutable('-5 minutes'),
                 new DateTimeImmutable()
             );
 

@@ -19,7 +19,7 @@ __".$streamer."__ подрубил
 
     public function endStreamNotification(string $streamer)
     {
-        $message = "__".$streamer."__ закончил";
+        $message = "<b>".$streamer."</b> закончил";
 
         $this->sendMessageToChannel($message);
     }
@@ -27,11 +27,9 @@ __".$streamer."__ подрубил
     public function clipNotification(string $streamer, string $url, string $title)
     {
         $message = "
-У __".$streamer."__ такое сейчас".
+У <b>".$streamer."</b> такое сейчас <a href='".$url."'>".$title."</a>";
 
-$title;
-
-        $this->sendMessageWithVideoToChannel($url, $message);
+        $this->sendMessageToChannel($message);
     }
 
     public function changeGameNotification(string $streamer, string $title, string $game, string $image)

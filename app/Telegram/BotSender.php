@@ -23,7 +23,8 @@ class BotSender
     {
         Http::get(self::TELEGRAM_BOT_URL.$this->botToken().'/sendMessage', [
             'chat_id' => $this->channelId(),
-            'text'    => $message
+            'text'    => $message,
+            'parse_mode' => 'HTML'
         ]);
     }
 
@@ -32,15 +33,6 @@ class BotSender
         Http::get(self::TELEGRAM_BOT_URL.$this->botToken().'/sendPhoto', [
             'chat_id'    => $this->channelId(),
             'photo'      => $img,
-            'caption'    => $message
-        ]);
-    }
-
-    protected function sendMessageWithVideoToChannel(string $clip, string $message)
-    {
-        Http::get(self::TELEGRAM_BOT_URL.$this->botToken().'/sendVideo', [
-            'chat_id'    => $this->channelId(),
-            'video'      => $clip,
             'caption'    => $message
         ]);
     }
