@@ -24,6 +24,11 @@ final class Configuration
         return env('TWITCH_REDIRECT_URI');
     }
 
+    public static function getRateClipCountViewers()
+    {
+        return env('RATE_CLIP_COUNT_VIEWERS ');
+    }
+
     public static function authorizationToken(): ?string
     {
         $tokenFile = app_path(Configuration::TOKEN_FILE);

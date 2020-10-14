@@ -102,19 +102,7 @@ class TwitchService
             $streamHistory->average_num_viewers = ($streamHistory->average_num_viewers + $stream['viewer_count'])/2;
             $streamHistory->save();
 
-            $clip = $this->clipApi->getClipByBroadcasterAndDate(
-                $broadcaster->twitch_id,
-                new DateTimeImmutable('-5 minutes'),
-                new DateTimeImmutable()
-            );
-
-            if ($clip) {
-                $this->botSender->clipNotification(
-                    $broadcaster->name,
-                    $clip['url'],
-                    $clip['title']
-                );
-            }
+            $this->sendActualClip($broadcaster);
         }
     }
 
@@ -177,5 +165,25 @@ class TwitchService
                 'count'          => $bannedCount
             ]);
         }
+    }
+
+    public function sendActualClip(Broadcaster $broadcaster)
+    {
+        $clip = $this->clipApi->getClipByBroadcasterAndDate(
+            $broadcaster->twitch_id,
+            new DateTimeImmutable('-5 minutes'),
+            new DateTimeImmutable()
+        );
+        if (!$clip) return;
+
+        $rateCountViewers = ($clip['view_count'] * 100) / $broadcaster->average_num_viewers;
+
+        if ($rateCountViewers < Configuration::getRateClipCountViewers()) return;
+
+        $this->botSender->clipNotification(
+            $broadcaster->name,
+            $clip['url'],
+            $clip['title']
+        );
     }
 }
