@@ -102,7 +102,7 @@ class TwitchService
             $streamHistory->average_num_viewers = ($streamHistory->average_num_viewers + $stream['viewer_count'])/2;
             $streamHistory->save();
 
-            $this->sendActualClip($broadcaster);
+            $this->sendActualClip($broadcaster, $streamHistory->average_num_viewers);
         }
     }
 
@@ -167,7 +167,7 @@ class TwitchService
         }
     }
 
-    public function sendActualClip(Broadcaster $broadcaster)
+    public function sendActualClip(Broadcaster $broadcaster, int $averageNumViewers)
     {
         $clip = $this->clipApi->getClipByBroadcasterAndDate(
             $broadcaster->twitch_id,
@@ -176,7 +176,7 @@ class TwitchService
         );
         if (!$clip) return;
 
-        $rateCountViewers = ($clip['view_count'] * 100) / $broadcaster->average_num_viewers;
+        $rateCountViewers = ($clip['view_count'] * 100) / $averageNumViewers;
 
         if ($rateCountViewers < Configuration::getRateClipCountViewers()) return;
 
