@@ -102,7 +102,7 @@ class TwitchService
             $streamHistory->average_num_viewers = ($streamHistory->average_num_viewers + $stream['viewer_count'])/2;
             $streamHistory->save();
 
-            $this->sendActualClip($broadcaster, $streamHistory->average_num_viewers);
+//            $this->sendActualClip($broadcaster, $streamHistory->average_num_viewers);
         }
     }
 
